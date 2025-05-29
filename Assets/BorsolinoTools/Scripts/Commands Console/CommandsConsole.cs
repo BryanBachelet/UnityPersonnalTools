@@ -22,9 +22,15 @@ namespace BorsalinoTools
 
             if (Input.GetKeyDown(KeyCode.BackQuote))
             {
-                Debug.Log("Test Input");
                 m_showWindow = !m_showWindow;
                 if (m_showWindow) m_isFirstTimeTrigger = false;
+            }
+            if(Input.GetKeyDown(KeyCode.Escape))
+            {
+                if(m_showWindow)
+                {
+                    m_showWindow = false;
+                }
             }
         }
 
@@ -96,7 +102,7 @@ namespace BorsalinoTools
                 object[] finalParameters = new object[countValidParameter];
                 System.Array.Copy(parameters, finalParameters, countValidParameter);
 
-
+                Debug.Log("Command : " + m_inputText);
                 logAction?.Invoke(instruction[0], finalParameters);
                 m_inputText = "";
             }

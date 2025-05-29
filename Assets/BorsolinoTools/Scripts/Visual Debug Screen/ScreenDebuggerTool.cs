@@ -34,19 +34,23 @@ namespace BorsalinoTools
 
     public class ScreenDebuggerTool : MonoBehaviour
     {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+
         private const int m_debugMessageFontSize = 15;
         private static Color m_noColor = new Color(0, 0, 0, 0);
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
 
         private static List<DebugMessageData> debugMessageDataList = new List<DebugMessageData>();
         private static List<DebugMessageMetaData> debugMessageMetaDataList = new List<DebugMessageMetaData>();
 
         private bool m_enableScreenMessage = true;
+#endif 
 
         public static void AddMessage(string text, float duration = 2, Color color = new Color(), [System.Runtime.CompilerServices.CallerMemberName] string membName = "",
                                                     [System.Runtime.CompilerServices.CallerFilePath] string filePath = "",
                                                     [System.Runtime.CompilerServices.CallerLineNumber] int lineNumber = 0)
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+
 
             DebugMessageData messageData;
             messageData = new DebugMessageData();
@@ -70,9 +74,10 @@ namespace BorsalinoTools
                 debugMessageDataList[indexMessageData].duration = 2;
                 debugMessageDataList[indexMessageData].text = text;
             }
-
+#endif 
 
         }
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 
         public void Start()
         {
