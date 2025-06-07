@@ -81,14 +81,16 @@ namespace BorsalinoTools
 
         public void Start()
         {
-              CommandsConsole.logAction += SetScreenDebugStateCommand;
-
+            CommandsConsole.logAction += SetScreenDebugStateCommand;
+            CommandsConsole.RegisterCommand("DisableScreenMessage");
+            CommandsConsole.RegisterCommand("EnableScreenMessage");
+  
         }
         public string inputText = "";
         public void Update()
         {
             // Temp Test --------------
-             AddMessage("Mouse Position" + Input.mousePosition.ToString());
+            AddMessage("Mouse Position" + Input.mousePosition.ToString());
             // ----------------------
 
             for (int i = 0; i < debugMessageDataList.Count; i++)
