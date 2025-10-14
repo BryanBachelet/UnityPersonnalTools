@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace BorsalinoTools
@@ -28,7 +30,7 @@ namespace BorsalinoTools
     {
         public static CsvInfo ReadCSVFile(CsvMetaInfo csvMetaInfo)
         {
-           
+
             if (!File.Exists(csvMetaInfo.path))
             {
                 throw new FileNotFoundException("The file doesnt exist");
@@ -43,13 +45,51 @@ namespace BorsalinoTools
             string allText = File.ReadAllText(csvMetaInfo.path);
 
 
-            string[] lines = allText.Split("\r\n");
-
-            csvInfo.elements = new string[lines.Length][];
-            for (int i = 0; i < lines.Length; i++)
+            if (csvMetaInfo.sepearator == ',')
             {
-                csvInfo.elements[i] = lines[i].Split(csvMetaInfo.sepearator);
+                string[] lines = allText.Split("\r\n");
+
+                csvInfo.elements = new string[lines.Length][];
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    int offset = 0;
+                    string[] valuesArray = lines[i].Split('\"', StringSplitOptions.RemoveEmptyEntries);
+                    if (lines[i][0] != '\"') offset = 1;
+
+                    List<string> registerValue = new List<string>();
+
+                    for (int j = 0; j < valuesArray.Length; j++)
+                    {
+                        if(j%2 == offset)
+                        {
+                            registerValue.Add(valuesArray[j]);
+                        }
+                        else
+                        {
+                            string[] values = valuesArray[j].Split(csvMetaInfo.sepearator, StringSplitOptions.RemoveEmptyEntries);
+                            registerValue.AddRange(values);
+                        }
+                    }
+
+                    csvInfo.elements[i] = registerValue.ToArray();
+                }
+               
+
+                
             }
+            else
+            {
+
+                string[] lines = allText.Split("\r\n");
+
+                csvInfo.elements = new string[lines.Length][];
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    csvInfo.elements[i] = lines[i].Split(csvMetaInfo.sepearator);
+                }
+            }
+
+
 
             csvInfo.hasId = csvMetaInfo.hasId;
             csvInfo.hasColumnName = csvMetaInfo.hasColumnName;
@@ -85,12 +125,12 @@ namespace BorsalinoTools
 
         public static string[] GetColumnValue(int indexColumn, CsvInfo info)
         {
-            if (info.elements == null) 
+            if (info.elements == null)
             { throw new NullReferenceException("Empty CSV file"); }
 
-            if (indexColumn >= info.elements[0].Length ) 
+            if (indexColumn >= info.elements[0].Length)
             { throw new Exception("Index column outside the array"); }
-            
+
             return _GetColumnValue(indexColumn, info);
         }
 
@@ -99,9 +139,9 @@ namespace BorsalinoTools
         {
             int startingIndex = info.hasColumnName ? 1 : 0;
             string[] columnElement = new string[info.elements.Length - startingIndex];
-            for (int i = startingIndex; i < (columnElement.Length+ startingIndex); i++)
+            for (int i = startingIndex; i < (columnElement.Length + startingIndex); i++)
             {
-                columnElement[i-1] = info.elements[i][index];
+                columnElement[i - startingIndex] = info.elements[i][index];
             }
 
             return columnElement;
@@ -137,6 +177,15 @@ namespace BorsalinoTools
         {
             return info.elements[index];
         }
+
+        public static FileStream CreateCSV(string path)
+        {
+            FileStream fs = File.Create(path);
+
+            return fs;
+
+        }
+
     }
 
 

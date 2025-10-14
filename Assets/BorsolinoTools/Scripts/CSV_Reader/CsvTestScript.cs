@@ -16,25 +16,25 @@ namespace BorsalinoTools
         // Start is called before the first frame update
         void Start()
         {
-            string path = Application.dataPath + "/Temp/dataTable.csv";
+            string path = Application.dataPath + "/Temp/TestCSV.csv";
             
             CsvMetaInfo csvMetaInfo = new CsvMetaInfo();
             csvMetaInfo.path = path;
-            csvMetaInfo.sepearator = ';';
-            csvMetaInfo.hasColumnName = true;
+            csvMetaInfo.sepearator = ',';
+            csvMetaInfo.hasColumnName = false;
 
             csvInfo = CsvTools.ReadCSVFile(csvMetaInfo);
 
             Debug.Log("Column Names : ");
             string[] columnName = CsvTools.GetColumnName(csvInfo);
-            for (int i = 0; i < columnName.Length; i++)
+            for (int i = 0; columnName != null && i < columnName.Length ; i++)
             {
                 Debug.Log(columnName[i]);
             }
 
             Debug.Log("----- Column Player Names value  --------- ");
 
-            string[] columnValue  = CsvTools.GetColumnValue(columnName[1], csvInfo);
+            string[] columnValue  = CsvTools.GetColumnValue(1, csvInfo);
             for (int i = 0; i < columnValue.Length; i++)
             {
                 Debug.Log(columnValue[i]);
