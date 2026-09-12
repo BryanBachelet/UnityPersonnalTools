@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Utilities;
 
 namespace BorsalinoTools
 {
@@ -51,40 +53,61 @@ namespace BorsalinoTools
         /* Store command name to allow suggestions when typing */
         private static List<string> commandTextList = new List<string>();
 
-
+        private IDisposable m_EventListener;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+
+        #region Unity Functions       
         public void Awake()
         {
             commandTextList.Clear();
         }
 
-        public void Update()
+        public void OnEnable()
         {
-            InputWindow();
+            m_EventListener = InputSystem.onAnyButtonPress.Call(OnButtonPressed);
         }
 
-        public void InputWindow()
+        public void OnDisable()
         {
-            if (Input.GetKeyDown(KeyCode.BackQuote))
+            m_EventListener.Dispose();
+        }
+
+        #endregion
+
+        private void OnButtonPressed(InputControl button)
+        {
+            if (button.displayName == "`")
             {
-                if (playerInput == null)
-                {
-                    playerInput = FindFirstObjectByType<PlayerInput>();
-                }
-                playerInput.DeactivateInput();
-                m_showWindow = !m_showWindow;
-                if (m_showWindow) m_isFirstTimeTrigger = false;
-                else m_inputCommandText = "";
+                OpenCommandWindow();
             }
-            if (Input.GetKeyDown(KeyCode.Escape))
+
+            if (button.displayName == "Esc")
             {
-                if (m_showWindow)
-                {
-                    playerInput.ActivateInput();
-                    m_showWindow = false;
-                    m_inputCommandText = "";
-                }
+                CloseCommandWindow();
             }
+        }
+
+        private void OpenCommandWindow()
+        {
+            if (playerInput == null)
+            {
+                playerInput = FindFirstObjectByType<PlayerInput>();
+            }
+            playerInput.DeactivateInput();
+            m_showWindow = true;
+            m_isFirstTimeTrigger = false;
+        }
+
+        private void CloseCommandWindow()
+        {
+            if (playerInput == null)
+            {
+                playerInput = FindFirstObjectByType<PlayerInput>();
+            }
+
+            playerInput.ActivateInput();
+            m_showWindow = false;
+            m_inputCommandText = "";
         }
 
         /// <summary>
@@ -110,7 +133,6 @@ namespace BorsalinoTools
             float result = arg is float ? (float)arg : float.MinValue;
             return result;
         }
-
 
         private void CreateAutoCompletionButton(string[] preCommand, int buttonCount)
         {
@@ -138,7 +160,6 @@ namespace BorsalinoTools
             }
             GUI.backgroundColor = originalBackgroundColor;
         }
-
 
         private void NavigationCommandWindow(int maxOptions)
         {
@@ -247,8 +268,6 @@ namespace BorsalinoTools
             }
         }
 
-
-
         public string[] FindPrefixCommand(string prefix)
         {
             if (prefix == null)
@@ -283,7 +302,6 @@ namespace BorsalinoTools
 
             return backgroundTexture;
         }
-
         public void ComputeCommand()
         {
 
