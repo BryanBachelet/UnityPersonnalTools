@@ -7,6 +7,14 @@ using UnityEngine.InputSystem;
 namespace BorsalinoTools
 {
 
+    /** 
+     * Command Console is class allow the editor's user to tap
+     * a command to execute it. The idea behind is to help provide
+     * debug commands to help developer. 
+     * 
+     * To use it you need register the command name and create a functiont to
+     * subscribe to LogAction event to receive command notification
+     */
     public class CommandsConsole : MonoBehaviour
     {
         private string m_inputCommandText;
@@ -31,11 +39,16 @@ namespace BorsalinoTools
         private bool m_hasInputTextChange;
         private const int m_maxAutoCompletionOption = 4;
 
+        /** The Player Input variable is important to deactivate player
+         *  input while the user type the command
+         **/
         private PlayerInput playerInput;
 
         public delegate void LogAction(string s, params object[] args);
-        public static LogAction logAction;
+        /* This delegate send a message when a command is call.*/
+        public static LogAction OnCommandCall;
 
+        /* Store command name to allow suggestions when typing */
         private static List<string> commandTextList = new List<string>();
 
 
@@ -54,13 +67,14 @@ namespace BorsalinoTools
         {
             if (Input.GetKeyDown(KeyCode.BackQuote))
             {
-                if(playerInput == null)
+                if (playerInput == null)
                 {
                     playerInput = FindFirstObjectByType<PlayerInput>();
                 }
                 playerInput.DeactivateInput();
                 m_showWindow = !m_showWindow;
                 if (m_showWindow) m_isFirstTimeTrigger = false;
+                else m_inputCommandText = "";
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
@@ -68,6 +82,7 @@ namespace BorsalinoTools
                 {
                     playerInput.ActivateInput();
                     m_showWindow = false;
+                    m_inputCommandText = "";
                 }
             }
         }
@@ -97,7 +112,7 @@ namespace BorsalinoTools
         }
 
 
-        private void CreateAutoCompletionButton(string[] preCommand,int buttonCount)
+        private void CreateAutoCompletionButton(string[] preCommand, int buttonCount)
         {
             TextEditor textEditor;
             GUIStyle style = new GUIStyle(GUI.skin.button);
@@ -207,12 +222,12 @@ namespace BorsalinoTools
                 int maxAutoCompletionOptions = Mathf.Min(m_maxAutoCompletionOption, maxPreCommandOption);
 
 
-               
+
                 GUILayout.BeginArea(new Rect(m_posX, Screen.height - m_posYOffset, m_commandWindowWidth, m_commandWindowHeight));
 
                 if (preCommand != null && preCommand.Length != 0)
                 {
-                    CreateAutoCompletionButton(preCommand, maxAutoCompletionOptions); 
+                    CreateAutoCompletionButton(preCommand, maxAutoCompletionOptions);
                 }
 
                 GUI.SetNextControlName("CommandArea");
@@ -242,7 +257,7 @@ namespace BorsalinoTools
             List<string> validCommand = new List<string>();
             for (int i = 0; i < commandTextList.Count; i++)
             {
-                if (myComp.IsPrefix(commandTextList[i],prefix))
+                if (myComp.IsPrefix(commandTextList[i], prefix))
                 {
                     validCommand.Add(commandTextList[i]);
                 }
@@ -310,7 +325,7 @@ namespace BorsalinoTools
                 System.Array.Copy(parameters, finalParameters, countValidParameter);
 
                 Debug.Log("Command : " + m_inputCommandText);
-                logAction?.Invoke(instruction[0], finalParameters);
+                OnCommandCall?.Invoke(instruction[0], finalParameters);
                 m_inputCommandText = "";
             }
         }

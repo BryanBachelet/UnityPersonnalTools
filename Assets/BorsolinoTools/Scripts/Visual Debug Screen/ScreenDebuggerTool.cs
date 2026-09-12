@@ -81,7 +81,7 @@ namespace BorsalinoTools
 
         public void Start()
         {
-            CommandsConsole.logAction += SetScreenDebugStateCommand;
+            CommandsConsole.OnCommandCall += SetScreenDebugStateCommand;
             CommandsConsole.RegisterCommand("DisableScreenMessage");
             CommandsConsole.RegisterCommand("EnableScreenMessage");
   
@@ -107,10 +107,8 @@ namespace BorsalinoTools
 
         }
 
-
         public void SetScreenDebugStateCommand(string inputdata, params object[] args)
         {
-
 
             if (inputdata == "DisableScreenMessage")
             {

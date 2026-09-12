@@ -9,13 +9,13 @@ public class PlayerController : MonoBehaviour
 
     public void Start()
     {
-        CommandsConsole.logAction += ResetPlayerCommand;
+        CommandsConsole.OnCommandCall += ResetPlayerCommand;
         CommandsConsole.RegisterCommand("ResetPlayer");
     }
 
     public void OnDestroy()
     {
-        BorsalinoTools.CommandsConsole.logAction -= ResetPlayerCommand;
+        BorsalinoTools.CommandsConsole.OnCommandCall -= ResetPlayerCommand;
     }
     public void OnMove(InputAction.CallbackContext ctx)
     {
