@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace BorsalinoTools
 {
@@ -30,6 +31,8 @@ namespace BorsalinoTools
         private bool m_hasInputTextChange;
         private const int m_maxAutoCompletionOption = 4;
 
+        private PlayerInput playerInput;
+
         public delegate void LogAction(string s, params object[] args);
         public static LogAction logAction;
 
@@ -51,6 +54,11 @@ namespace BorsalinoTools
         {
             if (Input.GetKeyDown(KeyCode.BackQuote))
             {
+                if(playerInput == null)
+                {
+                    playerInput = FindFirstObjectByType<PlayerInput>();
+                }
+                playerInput.DeactivateInput();
                 m_showWindow = !m_showWindow;
                 if (m_showWindow) m_isFirstTimeTrigger = false;
             }
@@ -58,6 +66,7 @@ namespace BorsalinoTools
             {
                 if (m_showWindow)
                 {
+                    playerInput.ActivateInput();
                     m_showWindow = false;
                 }
             }
