@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -27,6 +28,10 @@ namespace BorsalinoTools
             return (filepath == b.filepath) && (lineNumber == b.lineNumber) && (memberName == b.memberName);
         }
 
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(memberName, filepath, lineNumber);
+        }
     }
 
 

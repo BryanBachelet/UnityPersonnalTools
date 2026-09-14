@@ -1,10 +1,10 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 
 namespace BorsalinoTools
 {
@@ -54,7 +54,6 @@ namespace BorsalinoTools
         private static List<string> commandTextList = new List<string>();
 
         private IDisposable m_EventListener;
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
 
         #region Unity Functions       
         public void Awake()
@@ -110,7 +109,6 @@ namespace BorsalinoTools
             m_inputCommandText = "";
         }
 
-
         #region Static Function
         /// <summary>
         /// Functions use to register the command for the autocompletion tools
@@ -142,6 +140,7 @@ namespace BorsalinoTools
 
         #endregion
 
+        #region Window Functions
         private void CreateAutoCompletionButton(string[] preCommand, int buttonCount)
         {
             TextEditor textEditor;
@@ -361,7 +360,7 @@ namespace BorsalinoTools
                 m_inputCommandText = "";
             }
         }
-
+        #endregion
 #endif
     }
 }
