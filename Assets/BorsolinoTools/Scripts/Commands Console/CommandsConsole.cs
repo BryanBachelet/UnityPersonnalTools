@@ -110,6 +110,8 @@ namespace BorsalinoTools
             m_inputCommandText = "";
         }
 
+
+        #region Static Function
         /// <summary>
         /// Functions use to register the command for the autocompletion tools
         /// </summary>
@@ -121,8 +123,7 @@ namespace BorsalinoTools
             commandTextList.Add(commandString);
         }
 
-
-        // Functions to check argument 
+        // Functions to check argument type
         public static int IsInteger(object arg)
         {
             int result = arg is int ? (int)arg : int.MinValue;
@@ -133,21 +134,34 @@ namespace BorsalinoTools
             float result = arg is float ? (float)arg : float.MinValue;
             return result;
         }
+        public static string IsString(object arg)
+        {
+            string result = arg is string ? (string)arg : null;
+            return result;
+        }
+
+        #endregion
 
         private void CreateAutoCompletionButton(string[] preCommand, int buttonCount)
         {
             TextEditor textEditor;
+
             GUIStyle style = new GUIStyle(GUI.skin.button);
             Color originalBackgroundColor = GUI.backgroundColor;
+            
             GUI.backgroundColor = Color.yellow;
+            
             style.normal.background = MakeBackgroundTexture(10, 10, Color.black);
             style.border = new RectOffset(0, 0, 0, 0);
             style.padding = new RectOffset(0, 0, 0, 0);
             style.margin = new RectOffset(0, 0, 0, 0);
+
             textEditor = (TextEditor)GUIUtility.GetStateObject(typeof(TextEditor), GUIUtility.keyboardControl);
+            
             for (int i = 0; i < buttonCount; i++)
             {
                 GUI.SetNextControlName(i.ToString());
+
                 if (GUI.Button(new Rect(0, (3 - (buttonCount - 1) + i) * m_commandButtonHeight, m_commandWindowWidth, m_commandButtonHeight), preCommand[i], style))
                 {
                     m_inputCommandText = preCommand[i];
@@ -156,8 +170,8 @@ namespace BorsalinoTools
                     GUI.backgroundColor = originalBackgroundColor;
                     return;
                 }
-
             }
+            
             GUI.backgroundColor = originalBackgroundColor;
         }
 
